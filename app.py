@@ -1,49 +1,42 @@
+import code
 from MainWindow import *
 from Form import *
 from Book import *
+from Storage import *
 
-books = [
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85")),
-    Book.bookToTuple(Book("c++", "Samet", "2012", "10", "60")),
-    Book.bookToTuple(Book("python 3", "Samet", "2015", "1", "100")),
-    Book.bookToTuple(Book("java", "Samet", "2013", "5", "85"))
-]
+def itemSelected(event):
+    global selectedItem
+    temp = Book.tupleToBook(tuple(mainWindow.tree.item(mainWindow.tree.selection())['values']))
+    temp.code = mainWindow.tree.item(mainWindow.tree.selection())['values'][0]
+    selectedItem = temp
 
-def newBook():
+def addBook():
     print('New Book')
-    Form("Add Book")
+    Form("Add Book", storage.add)
+    refresh()
 
 def updateBook():
     print('Update Book')
-    Form("Update Book", books[0])
+    if selectedItem != None:
+        Form("Update Book", storage.update, Book.bookToTuple(selectedItem))
+        refresh()
 
 def deleteBook():
     print('Delete Book')
+    if selectedItem != None:
+        storage.delete(selectedItem.code),
+        refresh()
 
-MainWindow(books, newBook, updateBook, deleteBook)
+
+def refresh() -> None:
+    global books
+    books = storage.getAll()
+    mainWindow.books = books
+    mainWindow.frame.destroy()
+    mainWindow.widgets()
+
+storage = Storage("bookstore.sqlite")
+books = storage.getAll()
+selectedItem = None
+mainWindow = MainWindow(books, addBook, updateBook, deleteBook, itemSelected)
+mainWindow.window.mainloop()

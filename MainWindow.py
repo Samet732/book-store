@@ -5,11 +5,12 @@ class MainWindow():
     width = 1200
     height = 700
 
-    def __init__(self, books, newBookF, updateBookF, delBookF) -> None:
+    def __init__(self, books, newBookF, updateBookF, delBookF, itemSelected) -> None:
         self.books = books
         self.newBookF = newBookF
         self.updateBookF = updateBookF
         self.delBookF = delBookF
+        self.itemSelected = itemSelected
         self.window = Tk()
         
         self.widgets()
@@ -17,17 +18,16 @@ class MainWindow():
         self.window.title('Book Store')
         self.window.geometry(f'{self.width}x{self.height}+50+50')
         self.window.minsize(width=500, height=500)
-        self.window.mainloop()
 
     def widgets(self) -> None:
-        frame = Frame(self.window)
-        frame.pack(side=TOP, anchor=NW, padx=(5, 5), pady=(5, 5))
+        self.frame = Frame(self.window)
+        self.frame.pack(side=TOP, anchor=NW, padx=(5, 5), pady=(5, 5))
 
-        newBook = Button(frame, text="Add", command=self.newBookF, width=25)
+        newBook = Button(self.frame, text="Add", command=self.newBookF, width=25)
         newBook.pack(side=LEFT, padx=(0, 5))
-        updateBook = Button(frame, text="Update", command=self.updateBookF, width=25)
+        updateBook = Button(self.frame, text="Update", command=self.updateBookF, width=25)
         updateBook.pack(side=LEFT, padx=(0, 5))
-        delBook = Button(frame, text="Delete", command=self.delBookF, width=25)
+        delBook = Button(self.frame, text="Delete", command=self.delBookF, width=25)
         delBook.pack(side=LEFT)
 
         columns = ('code', 'name', 'author', 'year', 'piece', 'price')
@@ -45,4 +45,6 @@ class MainWindow():
 
         for i in self.books:
             self.tree.insert('', END, values=i)
+
+        self.tree.bind('<<TreeviewSelect>>', self.itemSelected)
         self.tree.pack(fill=BOTH, expand=True)

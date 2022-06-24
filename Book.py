@@ -1,8 +1,8 @@
 import uuid
 
 class Book():
-    def __init__(self, name: str, author: str, year: int, piece: int, price: float) -> None:
-        self.code = uuid.uuid4()
+    def __init__(self, name: str, author: str, year: int, piece: int, price: float, code=uuid.uuid4()) -> None:
+        self.code = code
         self.name = name
         self.author = author
         self.year = year

@@ -1,4 +1,5 @@
 from MainWindow import *
+from Form import *
 from Book import *
 
 books = [
@@ -36,9 +37,11 @@ books = [
 
 def newBook():
     print('New Book')
+    Form("Add Book")
 
 def updateBook():
     print('Update Book')
+    Form("Update Book", books[0])
 
 def deleteBook():
     print('Delete Book')

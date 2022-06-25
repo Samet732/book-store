@@ -13,6 +13,8 @@ class MainWindow():
         self.itemSelected = itemSelected
         self.window = Tk()
         
+        self.frame = Frame(self.window)
+        self.frame.pack(side=TOP, anchor=NW, padx=(5, 5), pady=(5, 5))
         self.widgets()
 
         self.window.title('Book Store')
@@ -20,9 +22,6 @@ class MainWindow():
         self.window.minsize(width=500, height=500)
 
     def widgets(self) -> None:
-        self.frame = Frame(self.window)
-        self.frame.pack(side=TOP, anchor=NW, padx=(5, 5), pady=(5, 5))
-
         newBook = Button(self.frame, text="Add", command=self.newBookF, width=25)
         newBook.pack(side=LEFT, padx=(0, 5))
         updateBook = Button(self.frame, text="Update", command=self.updateBookF, width=25)

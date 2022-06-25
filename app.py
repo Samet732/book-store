@@ -1,42 +1,54 @@
-import code
+from mimetypes import init
 from MainWindow import *
 from Form import *
 from Book import *
 from Storage import *
 
-def itemSelected(event):
-    global selectedItem
-    temp = Book.tupleToBook(tuple(mainWindow.tree.item(mainWindow.tree.selection())['values']))
-    temp.code = mainWindow.tree.item(mainWindow.tree.selection())['values'][0]
-    selectedItem = temp
+refresh = True
 
-def addBook():
-    print('New Book')
-    Form("Add Book", storage.add)
-    refresh()
+class App():
+    def __init__(self) -> None:
+        self.storage = Storage("bookstore.sqlite")
+        self.books = self.storage.getAll()
+        self.selectedItem = None
+        self.mainWindow = MainWindow(self.books, self.addBook, self.updateBook, self.deleteBook, self.itemSelected)
+        self.mainWindow.window.mainloop()
 
-def updateBook():
-    print('Update Book')
-    if selectedItem != None:
-        Form("Update Book", storage.update, Book.bookToTuple(selectedItem))
-        refresh()
+    def itemSelected(self, event) -> None:
+        global selectedItem
+        temp = Book.tupleToBook(tuple(self.mainWindow.tree.item(self.mainWindow.tree.selection())['values']))
+        temp.code = self.mainWindow.tree.item(self.mainWindow.tree.selection())['values'][0]
+        selectedItem = temp
 
-def deleteBook():
-    print('Delete Book')
-    if selectedItem != None:
-        storage.delete(selectedItem.code),
-        refresh()
+    def addBook(self) -> None:
+        print('New Book')
+        Form("Add Book", self.addBookCallback)
 
+    def updateBook(self) -> None:
+        print('Update Book')
+        if selectedItem != None:
+            Form("Update Book", self.updateBookCallback, Book.bookToTuple(selectedItem))
 
-def refresh() -> None:
-    global books
-    books = storage.getAll()
-    mainWindow.books = books
-    mainWindow.frame.destroy()
-    mainWindow.widgets()
+    def deleteBook(self) -> None:
+        print('Delete Book')
+        if selectedItem != None:
+            self.storage.delete(selectedItem.code)
+            self.refresh()
 
-storage = Storage("bookstore.sqlite")
-books = storage.getAll()
-selectedItem = None
-mainWindow = MainWindow(books, addBook, updateBook, deleteBook, itemSelected)
-mainWindow.window.mainloop()
+    def refresh(self) -> None:
+        global refresh
+        refresh = True
+        self.mainWindow.window.destroy()
+
+    def addBookCallback(self, b: Book) -> None:
+        self.storage.add(b)
+        self.refresh()
+
+    def updateBookCallback(self, b: Book) -> None:
+        self.storage.update(b)
+        self.refresh()
+
+if __name__ == '__main__':
+    while refresh:
+        refresh = False
+        app = App()

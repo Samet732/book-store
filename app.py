@@ -1,4 +1,3 @@
-from mimetypes import init
 from MainWindow import *
 from Form import *
 from Book import *
